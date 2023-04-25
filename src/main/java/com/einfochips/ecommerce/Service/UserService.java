@@ -14,4 +14,5 @@ public interface UserService {
 	List<User> getAllUsers();
 	ResponseEntity<Map<String, Object>> validateUser(String email, String password);
 //	ResponseEntity<Long> countEmail();
+	void deleteUser(long id);
 }

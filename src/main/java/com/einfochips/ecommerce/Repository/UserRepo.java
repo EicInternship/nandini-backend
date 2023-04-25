@@ -15,8 +15,10 @@ public interface UserRepo extends JpaRepository<User, Long>{
 	@Query("SELECT COUNT(DISTINCT email) FROM User")
     Long countEmail();
 	
-	@Query("DELETE FROM User WHERE email='email'")
-	User deleteUser(String email);
+	@Query("DELETE FROM User WHERE id=:id")
+	void deleteUser(long id);
+	
+	
 
 			
 }

@@ -76,11 +76,10 @@ public class UserServiceImpl implements UserService {
         }
     }
     
-	public User deleteUser(String email) {
-		// TODO Auto-generated method stub
-		User deletecustomer=userRepo.deleteUser(email);
-		return deletecustomer;
-	}
+    public void deleteUser(long id) {
+        userRepo.deleteUser(id);
+    }
+
 
 	
 }

@@ -36,6 +36,9 @@ public class UserController {
     @Autowired
     private UserServiceImpl userServiceImpl;
     
+    @Autowired
+    UserRepo ur;
+    
     private static final Logger log=LoggerFactory.getLogger(SpringBootApplication.class);
 
     @GetMapping("/checkuser")
@@ -67,8 +70,11 @@ public class UserController {
         return userServiceImpl.countEmail();
     }
     @GetMapping("/deleteuser")
-    public User deleteUser(@RequestParam String email) {
-    	return userServiceImpl.deleteUser(email);
+    public void deleteUser(@RequestParam long id) {
+        log.info("Delete Customer with email " + id);
+//        userServiceImpl.deleteUser(id);
+        ur.deleteById(id);
+        
     }
 
 }
