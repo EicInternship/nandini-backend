@@ -76,5 +76,12 @@ public class UserController {
         ur.deleteById(id);
         
     }
+    @PostMapping("/updateuser")
+    public void updateUser(@RequestBody User user) {
+//        log.info("Updating user with id: " + id);
+    	System.out.println(user);
+    	ur.save(user);
+    }
+
 
 }
