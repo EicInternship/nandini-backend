@@ -78,10 +78,20 @@ public class UserController {
     }
     @PostMapping("/updateuser")
     public void updateUser(@RequestBody User user) {
-//        log.info("Updating user with id: " + id);
+      log.info("Updating user with id: ");
     	System.out.println(user);
     	ur.save(user);
     }
+    
+    @GetMapping("/customerdetail")
+    public ResponseEntity<User> getUserDetailsById(@RequestParam Long id) {
+    	log.info("Detail Of Customer with ID"+id);
+        User user = ur.findById(id)
+            .orElseThrow();
+        return ResponseEntity.ok(user);
+    }
+
+
 
 
 }

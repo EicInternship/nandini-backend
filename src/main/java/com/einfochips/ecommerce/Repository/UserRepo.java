@@ -20,6 +20,7 @@ public interface UserRepo extends JpaRepository<User, Long>{
 	@Query("DELETE FROM User WHERE id=:id")
 	void deleteUser(long id);
 
+	Optional<User> findById(Long id);
 //	@Query("UPDATE user SET firstName='firstName',lastName='lastName',email='email',password='password',country='country',userType='userType' where id=:id")
 //	void updateUser(long id,User user);
 	
