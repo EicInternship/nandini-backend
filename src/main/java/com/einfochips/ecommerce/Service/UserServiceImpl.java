@@ -38,7 +38,7 @@ public class UserServiceImpl implements UserService {
 
     public ResponseEntity<User> saveUser(User user) {
         String encodedPassword = passwordEncoder.encode(user.getPassword());
-        user.setPassword(encodedPassword);
+        user.setPassword(encodedPassword) ;
         User savedUser = userRepo.save(user);
 
         return new ResponseEntity<>(savedUser, HttpStatus.OK);
