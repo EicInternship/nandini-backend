@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import com.einfochips.ecommerce.entity.Payment;
 import com.einfochips.ecommerce.entity.User;
 
 public interface UserRepo extends JpaRepository<User, Long>{
@@ -21,11 +22,6 @@ public interface UserRepo extends JpaRepository<User, Long>{
 	void deleteUser(long id);
 
 	Optional<User> findById(Long id);
-//	@Query("UPDATE user SET firstName='firstName',lastName='lastName',email='email',password='password',country='country',userType='userType' where id=:id")
-//	void updateUser(long id,User user);
-	
-//	@Query("UPDATE User u SET u.firstName = :firstName, u.lastName = :lastName, u.email = :email, u.password = :password, u.country = :country, u.userType = :userType WHERE u.id = :id")
-//	void updateUser(@Param("id") long id, @Param("firstName") String firstName, @Param("lastName") String lastName, @Param("email") String email, @Param("password") String password, @Param("country") String country, @Param("userType") String userType);
 
 	
 	@Modifying

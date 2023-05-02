@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import com.einfochips.ecommerce.Repository.UserRepo;
 import com.einfochips.ecommerce.Service.UserServiceImpl;
+import com.einfochips.ecommerce.entity.Payment;
 import com.einfochips.ecommerce.entity.User;
 
 
@@ -31,6 +32,7 @@ import jakarta.servlet.http.HttpServletRequest;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:3000/")
+@RequestMapping("/payment")
 public class UserController {
 
     @Autowired
@@ -90,8 +92,13 @@ public class UserController {
             .orElseThrow();
         return ResponseEntity.ok(user);
     }
-
-
-
-
+    
+    @PostMapping("/dopayment")
+    public Payment doPayment(@RequestBody Payment payment) {
+    	return userServiceImpl.doPayment(payment);
+    }
+    @PostMapping("/getuser")
+    public User getUser(@RequestBody User user) {
+    	return userServiceImpl.getUser(user);
+    }
 }

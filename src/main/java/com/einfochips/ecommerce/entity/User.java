@@ -33,7 +33,9 @@ public class User {
 	private String userType;
 	private LocalDate signupDate = LocalDate.now();
 	private String phoneno;
-
+	private String role;
+	
+	
 	
 }	
 	

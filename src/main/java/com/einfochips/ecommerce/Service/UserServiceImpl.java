@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Random;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
@@ -13,7 +15,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.einfochips.ecommerce.Repository.PaymentRepo;
 import com.einfochips.ecommerce.Repository.UserRepo;
+import com.einfochips.ecommerce.entity.Payment;
 import com.einfochips.ecommerce.entity.User;
 
 @Service
@@ -24,6 +28,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private UserRepo userRepo;
+    
+    @Autowired
+    private PaymentRepo paymentRepo;
 
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
@@ -79,6 +86,22 @@ public class UserServiceImpl implements UserService {
     public void deleteUser(long id) {
         userRepo.deleteUser(id);
     }
+
+	public Payment doPayment(Payment payment) {
+	payment.setPaymentStatus(paymentProcessing());
+	payment.setTransactionId(UUID.randomUUID().toString());
+		return paymentRepo.save(payment);
+	}
+	public String paymentProcessing() {
+		//api should be 3rd party payment gateway
+		return new Random().nextBoolean()?"success":"false";
+	}
+
+
+	public User getUser(User user) {
+		return userRepo.save(user);
+	}
+	
 
 
 	
