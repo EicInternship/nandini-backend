@@ -69,7 +69,13 @@ public class UserController {
     	log.info("Checking email already present? ");
         return userServiceImpl.checkuseremail(email);
     }
-
+    
+    @PostMapping("/checkEmailForReset")
+    public ResponseEntity<Map<String,Boolean>> checkEmailForForgetPassword(@RequestBody @Valid String email) throws Exception{
+    	log.info("Checking Email For Forget Password");
+    	System.out.println(email.replace("%40", "@").replace("=", ""));
+    	return userServiceImpl.checkEmailForForgetPassword(email.replace("%40", "@").replace("=", ""));
+    }
     @PostMapping("/saveuser")
     public ResponseEntity<User> saveUser(@RequestBody @Valid User user) {
     	log.info("Registration of user occures");
@@ -89,16 +95,17 @@ public class UserController {
 //    }
     
 @PostMapping("/validateuser")
-public String authenticateAndGetToken(@RequestBody @Valid AuthRequest authRequest) {
+public ResponseEntity<String> authenticateAndGetToken(@RequestBody @Valid AuthRequest authRequest) {
 	
 	Authentication authentication = authenticationManager.authenticate(
 			new UsernamePasswordAuthenticationToken(authRequest.getEmail(), authRequest.getPassword()));
 	if (authentication.isAuthenticated()) {
 		log.info("token genrated");
-		return jwtService.generateToken(authRequest.getEmail());
+		return new ResponseEntity<String>( jwtService.generateToken(authRequest.getEmail()),HttpStatus.OK);
 	} else {
 		log.info("user is invalied");
-		throw new UsernameNotFoundException("invalid user request !");
+//		throw new UsernameNotFoundException("invalid user request !");
+		return new ResponseEntity<String>("NaNdhgfgdsi", HttpStatus.BAD_REQUEST);
 	}
 
 }

@@ -9,7 +9,17 @@ import java.util.Random;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.stereotype.Service;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.event.EventListener;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -20,6 +30,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+
+import com.einfochips.ecommerce.EcommerceWebsiteApplication;
 import com.einfochips.ecommerce.Repository.PaymentRepo;
 import com.einfochips.ecommerce.Repository.UserRepo;
 import com.einfochips.ecommerce.entity.AuthRequest;
@@ -41,7 +53,28 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
+    
+    @Autowired
+	private EmailSendingService mailService;
+	
+	
+//	@EventListener(ApplicationReadyEvent.class)
+//	public void sendMail() {
+//		mailService.sendEmail("jdjethwa28@gmail.com","Cheking Email Sending Service", "Nothing in Mail Body");
+//	}
 
+    public ResponseEntity<Map<String,Boolean>>checkuseremail(String email) throws EmailNotFoundExcaption{
+    	boolean userExist=userRepo.existsByEmail(email);
+    	Map<String,Boolean> response=new HashMap<>();
+    	if (!userExist) {
+    	    throw new EmailNotFoundExcaption("User with this email '" + email + "' is not found");
+    	    
+    	}
+    	
+
+    	return new ResponseEntity<>(response,HttpStatus.NOT_FOUND);
+    } 
+    
     public ResponseEntity<Map<String, Boolean>> checkUsers(String email) throws Exception {
         boolean exists = userRepo.existsByEmail(email);
         Map<String, Boolean> response = new HashMap<>();
@@ -52,18 +85,26 @@ public class UserServiceImpl implements UserService {
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
-    
-    
-    
-    public ResponseEntity<Map<String,Boolean>>checkuseremail(String email) throws EmailNotFoundExcaption{
-    	boolean userExist=userRepo.existsByEmail(email);
+
+    public ResponseEntity<Map<String,Boolean>> checkEmailForForgetPassword(String email) throws Exception{
+    	boolean emailExist=userRepo.existsByEmail(email);
     	Map<String,Boolean> response=new HashMap<>();
-    	if (!userExist) {
-    	    throw new EmailNotFoundExcaption("User with this email '" + email + "' is not found");
+    	response.put("emailExist", emailExist);
+
+    	if (!emailExist) {
+//    	    throw new Exception("User with this email '" + email + "' is not found");
+        	return new ResponseEntity<>(response,HttpStatus.BAD_REQUEST);
+    	}
+    	else {
+    		
+        
+        		mailService.sendEmail(email, "Test", "Test");
+        	
+        	
+    		return new ResponseEntity<>(response,HttpStatus.OK);
     	}
     	
-
-    	return new ResponseEntity<>(response,HttpStatus.NOT_FOUND);
+    	
     }
 
     public ResponseEntity<User> saveUser(User user) {
