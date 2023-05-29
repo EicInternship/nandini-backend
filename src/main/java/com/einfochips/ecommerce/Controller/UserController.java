@@ -18,6 +18,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -26,7 +28,10 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.ModelAndView;
+
 import com.einfochips.ecommerce.Repository.UserRepo;
 import com.einfochips.ecommerce.Service.JwtService;
 import com.einfochips.ecommerce.Service.UserServiceImpl;
@@ -34,6 +39,7 @@ import com.einfochips.ecommerce.entity.AuthRequest;
 import com.einfochips.ecommerce.entity.Payment;
 import com.einfochips.ecommerce.entity.User;
 import com.einfochips.ecommerce.exception.EmailNotFoundExcaption;
+
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -56,6 +62,22 @@ public class UserController {
    	private AuthenticationManager authenticationManager;
     
     private static final Logger log=LoggerFactory.getLogger(SpringBootApplication.class);
+    
+    @RequestMapping("/home")
+    public ModelAndView home() {
+    	ModelAndView mv=new ModelAndView("home");
+    	return mv;
+    }
+    
+    @RequestMapping("/username")
+    public ModelAndView displayName(@RequestParam("user") String name,Model m) {
+    	ModelAndView mv=new ModelAndView("user");
+    	System.out.println(name);
+    	mv.addObject("name", name);
+    	return mv;
+    	
+    }
+    
 
     @GetMapping("/checkuser")
     public ResponseEntity<Map<String, Boolean>> checkUsers(@RequestParam @Valid String email) throws Exception {
@@ -76,6 +98,11 @@ public class UserController {
     	System.out.println(email.replace("%40", "@").replace("=", ""));
     	return userServiceImpl.checkEmailForForgetPassword(email.replace("%40", "@").replace("=", ""));
     }
+    @GetMapping("/changepassword")
+    public ResponseEntity<Map<String,String>> changeUpdatedPassword(@RequestParam String email,@RequestParam String password){
+    	log.info("Changing User's Password");
+    	return userServiceImpl.changeUserPassword(email, password);
+    }
     @PostMapping("/saveuser")
     public ResponseEntity<User> saveUser(@RequestBody @Valid User user) {
     	log.info("Registration of user occures");
@@ -85,6 +112,7 @@ public class UserController {
     @GetMapping("/viewuser")
     public List<User> getAllUsers() {
     	log.info("Customer List printed in frontend");
+    
         return userServiceImpl.getAllUsers();
     }
 
@@ -163,10 +191,15 @@ public ResponseEntity<String> authenticateAndGetToken(@RequestBody @Valid AuthRe
     	log.info("Total number of Admin Display");
     	return userServiceImpl.getTotalAdmin();
     }
-    @GetMapping("/sumofspent")
-    public ResponseEntity<Double> getSumOfSpent(){
-    	log.info("Getting Sum of Total Spent");
-    	return userServiceImpl.getSumOfSpent();
+//    @GetMapping("/sumofspent")
+//    public ResponseEntity<Double> getSumOfSpent(){
+//    	log.info("Getting Sum of Total Spent");
+//    	return userServiceImpl.getSumOfSpent();
+//    }
+    @GetMapping("/totalprofit")
+    public ResponseEntity<Double> getTotalProfit(@RequestParam Double spent){
+    	log.info("Adding Total Sum of Profit");
+    	return userServiceImpl.getTotalProfit(spent);
     }
     
    

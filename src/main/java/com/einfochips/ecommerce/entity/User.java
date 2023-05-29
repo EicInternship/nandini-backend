@@ -39,16 +39,16 @@ public class User {
     @NotEmpty(message = "Last Name should not be empty")
     private String lastName;
 
-    @Column(length = 60)
-    @Pattern(regexp = "^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=]).*$",message = "Password should"
-    		+ " contain at least one digit, one capital letter, one small letter, and one special character")
-    @NotEmpty(message = "Password should not be empty")
+//    @Column(length = 60)
+//    @Pattern(regexp = "^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=]).*$",message = "Password should"
+//    		+ " contain at least one digit, one capital letter, one small letter, and one special character")
+//    @NotEmpty(message = "Password should not be empty")
     private String password;
 
     @NotEmpty(message = "Country should not be empty")
     private String country;
 
-    @NotNull
+//    @NotNull
     @Pattern(regexp = "^[0-9]{10,10}$", message = "Phone number should be exactly 10 digits")
     private String phoneNo;
 

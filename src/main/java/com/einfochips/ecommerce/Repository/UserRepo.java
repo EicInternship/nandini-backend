@@ -9,6 +9,9 @@ import org.springframework.data.repository.query.Param;
 
 import com.einfochips.ecommerce.entity.User;
 
+import jakarta.transaction.Transactional;
+
+@Transactional
 public interface UserRepo extends JpaRepository<User, Long>{
 	Optional<User> findByEmail(String email);
 	User findByEmailAndPassword(String email,String password);
@@ -29,6 +32,12 @@ public interface UserRepo extends JpaRepository<User, Long>{
 	
 	@Query("SELECT SUM(spent) FROM User")
 	Double sumOfSpent();
+	
+
+	@Modifying
+	@Query("UPDATE User SET password = :password WHERE email = :email")
+	void changePassword(@Param("email") String email, @Param("password") String password);
+
 	
 	@Query("DELETE FROM User WHERE id=:id")
 	void deleteUser(long id);

@@ -1,5 +1,6 @@
 package com.einfochips.ecommerce.Service;
 
+import java.security.SecureRandom;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -40,7 +41,7 @@ import com.einfochips.ecommerce.entity.User;
 import com.einfochips.ecommerce.exception.EmailNotFoundExcaption;
 
 @Service
-public class UserServiceImpl implements UserService {
+public class UserServiceImpl  {
 
     @Autowired
     private ApplicationEventPublisher publisher;
@@ -58,10 +59,6 @@ public class UserServiceImpl implements UserService {
 	private EmailSendingService mailService;
 	
 	
-//	@EventListener(ApplicationReadyEvent.class)
-//	public void sendMail() {
-//		mailService.sendEmail("jdjethwa28@gmail.com","Cheking Email Sending Service", "Nothing in Mail Body");
-//	}
 
     public ResponseEntity<Map<String,Boolean>>checkuseremail(String email) throws EmailNotFoundExcaption{
     	boolean userExist=userRepo.existsByEmail(email);
@@ -86,26 +83,72 @@ public class UserServiceImpl implements UserService {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    public ResponseEntity<Map<String,Boolean>> checkEmailForForgetPassword(String email) throws Exception{
-    	boolean emailExist=userRepo.existsByEmail(email);
-    	Map<String,Boolean> response=new HashMap<>();
-    	response.put("emailExist", emailExist);
+   
+    public ResponseEntity<Map<String, Boolean>> checkEmailForForgetPassword(String email) throws Exception {
+        boolean emailExist = userRepo.existsByEmail(email);
+        if(!emailExist) {
+        	throw new Exception("User with this email:"+ email+" is not found");
+        }
+        else {
+        	throw new Exception("Email: "+email+" is found Successfully");
+        }
+//        Map<String, Boolean> response = new HashMap<>();
+//        response.put("emailExist", emailExist);
 
-    	if (!emailExist) {
-//    	    throw new Exception("User with this email '" + email + "' is not found");
-        	return new ResponseEntity<>(response,HttpStatus.BAD_REQUEST);
-    	}
-    	else {
-    		
-        
-        		mailService.sendEmail(email, "Test", "Test");
-        	
-        	
-    		return new ResponseEntity<>(response,HttpStatus.OK);
-    	}
-    	
-    	
+//        String uppercaseLetters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+//        String lowercaseLetters = "abcdefghijklmnopqrstuvwxyz";
+//        String numbers = "0123456789";
+//        String specialCharacters = "@$%&*";
+//        SecureRandom random = new SecureRandom();
+//        StringBuilder sb = new StringBuilder(10);
+//
+//        // Append one uppercase letter
+//        sb.append(uppercaseLetters.charAt(random.nextInt(uppercaseLetters.length())));
+//
+//        // Append one lowercase letter
+//        sb.append(lowercaseLetters.charAt(random.nextInt(lowercaseLetters.length())));
+//
+//        // Append one number
+//        sb.append(numbers.charAt(random.nextInt(numbers.length())));
+//
+//        // Append one special character
+//        sb.append(specialCharacters.charAt(random.nextInt(specialCharacters.length())));
+//
+//        // Generate remaining characters randomly
+//        for (int i = 4; i < 10; i++) {
+//            String randomChars = uppercaseLetters + lowercaseLetters + numbers + specialCharacters;
+//            sb.append(randomChars.charAt(random.nextInt(randomChars.length())));
+//        }
+//
+//        System.out.println(sb);
+//        System.out.println(emailExist);
+//
+//        if (!emailExist) {
+//            System.out.println("123");
+//            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+//        } else {
+//            System.out.println("12379879879");
+//            String plainTextPassword = sb.toString();
+//            String encodedPassword = passwordEncoder.encode(plainTextPassword);
+//            System.out.println(encodedPassword);
+//            userRepo.changePassword(email, encodedPassword);
+//
+//            System.out.println("456");
+//            mailService.sendEmail(email, "For Reset Password", "Your Email id is=" + email +
+//                    " and Password is=" + plainTextPassword);
+//
+//            return new ResponseEntity<>(response, HttpStatus.OK);
+//        }
     }
+
+    public ResponseEntity<Map<String,String>> changeUserPassword(String email,String password){
+    	Map<String, String> response = new HashMap<>();
+        response.put("Change Password","Change Password Successfullsy");
+    	String encodedPassword = passwordEncoder.encode(password);
+    	userRepo.changePassword(email, encodedPassword);
+    	return new ResponseEntity<> (response, HttpStatus.OK);
+    }
+
 
     public ResponseEntity<User> saveUser(User user) {
         String encodedPassword = passwordEncoder.encode(user.getPassword());
@@ -124,30 +167,6 @@ public class UserServiceImpl implements UserService {
         return ResponseEntity.ok(count);
     }
 
-//    public ResponseEntity<Map<String, Object>> validateUser(String email, String password) {
-//        try {
-//            Optional<User> userOptional = userRepo.findByEmail(email);
-//            if (userOptional.isEmpty()) {
-//                return ResponseEntity.status(HttpStatus.NOT_FOUND)
-//                        .body(Collections.singletonMap("error", "User not found"));
-//            }
-//
-//            User user = userOptional.get();
-//            if (!passwordEncoder.matches(password, user.getPassword())) {
-//                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-//                        .body(Collections.singletonMap("error", "Incorrect password"));
-//            }
-//
-//            Map<String, Object> response = new HashMap<>();
-//            response.put("isValidUser", true);
-//            return ResponseEntity.ok(response);
-//        } catch (Exception e) {
-//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-//                    .body(Collections.singletonMap("error", e.getMessage()));
-//        }
-//    }
-    
-    
     public void deleteUser(long id) {
         userRepo.deleteUser(id);
     }
@@ -180,9 +199,14 @@ public class UserServiceImpl implements UserService {
 		return ResponseEntity.ok(count);
 	}
 
-	@Override
-	public ResponseEntity<Double> getSumOfSpent() {
-		Double sum=userRepo.sumOfSpent();
+//	public ResponseEntity<Double> getSumOfSpent() {
+//		Double sum=userRepo.sumOfSpent();
+//		return ResponseEntity.ok(sum);
+//	}
+	
+	public ResponseEntity<Double> getTotalProfit(Double spent){
+		Double sum=userRepo.sumOfSpent()+ spent;
+		System.out.println("spent is:"+spent);
 		return ResponseEntity.ok(sum);
 	}
 
