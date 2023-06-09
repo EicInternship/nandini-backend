@@ -1,5 +1,6 @@
 package com.einfochips.ecommerce.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -8,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import com.einfochips.ecommerce.entity.User;
+import com.einfochips.ecommerce.userLoads.UserResponse;
 
 import jakarta.transaction.Transactional;
 
@@ -15,6 +17,8 @@ import jakarta.transaction.Transactional;
 public interface UserRepo extends JpaRepository<User, Long>{
 	Optional<User> findByEmail(String email);
 	User findByEmailAndPassword(String email,String password);
+	
+	
 	
 	boolean existsByEmail(String email);
 	
@@ -31,7 +35,7 @@ public interface UserRepo extends JpaRepository<User, Long>{
 	Long countAdmin();
 	
 	@Query("SELECT SUM(spent) FROM User")
-	Double sumOfSpent();
+	int sumOfSpent();
 	
 
 	@Modifying

@@ -11,7 +11,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -39,7 +41,7 @@ import com.einfochips.ecommerce.entity.AuthRequest;
 import com.einfochips.ecommerce.entity.Payment;
 import com.einfochips.ecommerce.entity.User;
 import com.einfochips.ecommerce.exception.EmailNotFoundExcaption;
-
+import com.einfochips.ecommerce.userLoads.UserResponse;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -110,20 +112,18 @@ public class UserController {
     }
 
     @GetMapping("/viewuser")
-    public List<User> getAllUsers() {
-    	log.info("Customer List printed in frontend");
-    
-        return userServiceImpl.getAllUsers();
+    Page<User> getAllUsers(
+        @RequestParam(value = "pageNumber", defaultValue = "0") Integer pageNumber,
+        @RequestParam(value = "pageSize", defaultValue = "5") Integer pageSize) {
+      log.info("Customer List printed in frontend");
+
+      return userServiceImpl.getAllUsers(pageNumber, pageSize);
+      
     }
 
-//    @GetMapping("/validuser")
-//    public ResponseEntity<Map<String, Object>> validateUser(@RequestParam String email, @RequestParam String password) {
-//    	log.info("Validation of user to login");
-//        return userServiceImpl.validateUser(email, password);
-//    }
-    
-@PostMapping("/validateuser")
-public ResponseEntity<String> authenticateAndGetToken(@RequestBody @Valid AuthRequest authRequest) {
+
+   @PostMapping("/validateuser")
+   public ResponseEntity<String> authenticateAndGetToken(@RequestBody @Valid AuthRequest authRequest) {
 	
 	Authentication authentication = authenticationManager.authenticate(
 			new UsernamePasswordAuthenticationToken(authRequest.getEmail(), authRequest.getPassword()));
@@ -133,7 +133,7 @@ public ResponseEntity<String> authenticateAndGetToken(@RequestBody @Valid AuthRe
 	} else {
 		log.info("user is invalied");
 //		throw new UsernameNotFoundException("invalid user request !");
-		return new ResponseEntity<String>("NaNdhgfgdsi", HttpStatus.BAD_REQUEST);
+		return new ResponseEntity<String>("Invalid user email or password", HttpStatus.BAD_REQUEST);
 	}
 
 }
@@ -163,11 +163,11 @@ public ResponseEntity<String> authenticateAndGetToken(@RequestBody @Valid AuthRe
             .orElseThrow();
         return ResponseEntity.ok(user);
     }
-    
-    @PostMapping("/dopayment")
-    public Payment doPayment(@RequestBody @Valid Payment payment) {
-    	return userServiceImpl.doPayment(payment);
-    }
+//    
+//    @PostMapping("/dopayment")
+//    public Payment doPayment(@RequestBody @Valid Payment payment) {
+//    	return userServiceImpl.doPayment(payment);
+//    }
     @GetMapping("/getuser")
     public User getUser(@RequestBody @Valid User user) {
     	return userServiceImpl.getUser(user);
@@ -191,15 +191,11 @@ public ResponseEntity<String> authenticateAndGetToken(@RequestBody @Valid AuthRe
     	log.info("Total number of Admin Display");
     	return userServiceImpl.getTotalAdmin();
     }
-//    @GetMapping("/sumofspent")
-//    public ResponseEntity<Double> getSumOfSpent(){
-//    	log.info("Getting Sum of Total Spent");
-//    	return userServiceImpl.getSumOfSpent();
-//    }
+
     @GetMapping("/totalprofit")
-    public ResponseEntity<Double> getTotalProfit(@RequestParam Double spent){
+    public int getTotalProfit(){
     	log.info("Adding Total Sum of Profit");
-    	return userServiceImpl.getTotalProfit(spent);
+    	return userServiceImpl.getTotalProfit();
     }
     
    
